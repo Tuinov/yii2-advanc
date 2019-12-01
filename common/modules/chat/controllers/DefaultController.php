@@ -3,6 +3,8 @@
 namespace common\modules\chat\controllers;
 
 use Ratchet\Server\IoServer;
+use Ratchet\Http\HttpServer;
+use Ratchet\WebSocket\WsServer;
 use common\modules\chat\components\Chat;
 use yii\console\Controller;
 
@@ -19,15 +21,14 @@ class DefaultController extends Controller
     {
 
         $server = IoServer::factory(
-            new Chat(),
+            new HttpServer(
+                new WsServer(
+                    new Chat()
+                )
+            ),
             8080
         );
-
-        $server->loop->addPeriodicTimer(2, function () {
-            echo date('H:1:s');
-        });
-        echo 'server starting';
-
+        echo 'start server';
         $server->run();
     }
 }
